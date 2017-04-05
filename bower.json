@@ -1,0 +1,29 @@
+{
+  "name": "react-image-mapper",
+  "version": "0.0.0",
+  "description": "imageMapper",
+  "main": "dist/react-image-mapper.min.js",
+  "homepage": "https://github.com/coldiary/react-image-mapper",
+  "authors": [
+    "Coldiary"
+  ],
+  "moduleType": [
+    "amd",
+    "globals",
+    "node"
+  ],
+  "keywords": [
+    "react",
+    "react-component"
+  ],
+  "license": "MIT",
+  "ignore": [
+    ".editorconfig",
+    ".gitignore",
+    "package.json",
+    "src",
+    "node_modules",
+    "example",
+    "test"
+  ]
+}
