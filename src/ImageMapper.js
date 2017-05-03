@@ -15,33 +15,28 @@ export default class ImageMapper extends Component {
 	drawrect(coord) {
 		coord = coord.split(',');
 		let [left, top, right, bot] = coord;
-		this.context.strokeRect(left, top, right - left, bot - top);
-		this.context.fillRect(left, top, right - left, bot - top);
+		this.ctx.strokeRect(left, top, right - left, bot - top);
+		this.ctx.fillRect(left, top, right - left, bot - top);
 	}
 
 	drawcircle(coords) {
 		coords = coords.split(',');
-		this.context.beginPath();
-		this.context.arc(coords[0], coords[1], coords[2], 0, 2 * Math.PI);
-		this.context.closePath();
-		this.context.stroke();
-		this.context.fill();
+		this.ctx.beginPath();
+		this.ctx.arc(coords[0], coords[1], coords[2], 0, 2 * Math.PI);
+		this.ctx.closePath();
+		this.ctx.stroke();
+		this.ctx.fill();
 	}
 
 	drawpoly(coords) {
-		coords = coords.split(',');
-		let n = coords.length;
-		this.context.beginPath();
-		this.context.moveTo(coords[0], coords[1]);
-		for (let i = 2; i < n; i += 2)
-			this.context.lineTo(coords[i], coords[i + 1]);
-		this.context.closePath();
-		this.context.stroke();
-		this.context.fill();
-	}
-
-	componentDidMount() {
-		this.initCanvas();
+		coords = coords.split(',').reduce((a, v, i, s) => (i % 2 ? a : [...a, s.slice(i, i + 2)]), []);
+		this.ctx.beginPath();
+		let first = coords.unshift();
+		this.ctx.moveTo(first[0], first[1]);
+		coords.forEach(c => this.ctx.lineTo(c[0], c[1]));
+		this.ctx.closePath();
+		this.ctx.stroke();
+		this.ctx.fill();
 	}
 
 	initCanvas() {
@@ -51,10 +46,10 @@ export default class ImageMapper extends Component {
 		this.canvas.height = this.img.clientHeight;
 		this.container.style.width = this.img.clientWidth + 'px';
 		this.container.style.height = this.img.clientHeight + 'px';
-		this.context = this.canvas.getContext('2d');
-		this.context.fillStyle = this.props.fillColor;
-		this.context.strokeStyle = this.props.strokeColor;
-		this.context.lineWidth = this.props.lineWidth;
+		this.ctx = this.canvas.getContext('2d');
+		this.ctx.fillStyle = this.props.fillColor;
+		this.ctx.strokeStyle = this.props.strokeColor;
+		this.ctx.lineWidth = this.props.lineWidth;
 		if (this.props.onLoad)
 			this.props.onLoad();
 	}
@@ -69,7 +64,7 @@ export default class ImageMapper extends Component {
 
 	hoverOff(area, index, event) {
 		if (this.props.active)
-			this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+			this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 		if (this.props.onMouseLeave)
 			this.props.onMouseLeave(area, index, event);
 	}
@@ -93,7 +88,7 @@ export default class ImageMapper extends Component {
 	render() {
 		return (
 			<div style={this.styles.container} ref={node => this.container = node}>
-				<img style={this.styles.img} src={this.props.src} useMap={this.props.map.name} alt=""
+				<img style={this.styles.img} src={this.props.src} useMap={`#${this.props.map.name}`} alt=""
 					 ref={node => this.img = node} onLoad={this.initCanvas}
 					 onClick={this.props.onImageClick} />
 				<canvas ref={node => this.canvas = node} style={this.styles.canvas} />

@@ -16,6 +16,8 @@ var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_ag
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i]; return arr2; } else { return Array.from(arr); } }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
@@ -57,36 +59,36 @@ var ImageMapper = (function (_Component) {
 			var right = _coord2[2];
 			var bot = _coord2[3];
 
-			this.context.strokeRect(left, top, right - left, bot - top);
-			this.context.fillRect(left, top, right - left, bot - top);
+			this.ctx.strokeRect(left, top, right - left, bot - top);
+			this.ctx.fillRect(left, top, right - left, bot - top);
 		}
 	}, {
 		key: 'drawcircle',
 		value: function drawcircle(coords) {
 			coords = coords.split(',');
-			this.context.beginPath();
-			this.context.arc(coords[0], coords[1], coords[2], 0, 2 * Math.PI);
-			this.context.closePath();
-			this.context.stroke();
-			this.context.fill();
+			this.ctx.beginPath();
+			this.ctx.arc(coords[0], coords[1], coords[2], 0, 2 * Math.PI);
+			this.ctx.closePath();
+			this.ctx.stroke();
+			this.ctx.fill();
 		}
 	}, {
 		key: 'drawpoly',
 		value: function drawpoly(coords) {
-			coords = coords.split(',');
-			var n = coords.length;
-			this.context.beginPath();
-			this.context.moveTo(coords[0], coords[1]);
-			for (var i = 2; i < n; i += 2) {
-				this.context.lineTo(coords[i], coords[i + 1]);
-			}this.context.closePath();
-			this.context.stroke();
-			this.context.fill();
-		}
-	}, {
-		key: 'componentDidMount',
-		value: function componentDidMount() {
-			this.initCanvas();
+			var _this2 = this;
+
+			coords = coords.split(',').reduce(function (a, v, i, s) {
+				return i % 2 ? a : [].concat(_toConsumableArray(a), [s.slice(i, i + 2)]);
+			}, []);
+			this.ctx.beginPath();
+			var first = coords.unshift();
+			this.ctx.moveTo(first[0], first[1]);
+			coords.forEach(function (c) {
+				return _this2.ctx.lineTo(c[0], c[1]);
+			});
+			this.ctx.closePath();
+			this.ctx.stroke();
+			this.ctx.fill();
 		}
 	}, {
 		key: 'initCanvas',
@@ -96,10 +98,10 @@ var ImageMapper = (function (_Component) {
 			this.canvas.height = this.img.clientHeight;
 			this.container.style.width = this.img.clientWidth + 'px';
 			this.container.style.height = this.img.clientHeight + 'px';
-			this.context = this.canvas.getContext('2d');
-			this.context.fillStyle = this.props.fillColor;
-			this.context.strokeStyle = this.props.strokeColor;
-			this.context.lineWidth = this.props.lineWidth;
+			this.ctx = this.canvas.getContext('2d');
+			this.ctx.fillStyle = this.props.fillColor;
+			this.ctx.strokeStyle = this.props.strokeColor;
+			this.ctx.lineWidth = this.props.lineWidth;
 			if (this.props.onLoad) this.props.onLoad();
 		}
 	}, {
@@ -112,7 +114,7 @@ var ImageMapper = (function (_Component) {
 	}, {
 		key: 'hoverOff',
 		value: function hoverOff(area, index, event) {
-			if (this.props.active) this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+			if (this.props.active) this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 			if (this.props.onMouseLeave) this.props.onMouseLeave(area, index, event);
 		}
 	}, {
@@ -126,32 +128,32 @@ var ImageMapper = (function (_Component) {
 	}, {
 		key: 'renderAreas',
 		value: function renderAreas() {
-			var _this2 = this;
+			var _this3 = this;
 
 			return this.props.map.areas.map(function (area, index) {
 				return _react2['default'].createElement('area', { key: area._id || index, shape: area.shape, coords: area.coords.join(','),
-					onMouseEnter: _this2.hoverOn.bind(_this2, area, index),
-					onMouseLeave: _this2.hoverOff.bind(_this2, area, index),
-					onClick: _this2.click.bind(_this2, area, index), href: area.href });
+					onMouseEnter: _this3.hoverOn.bind(_this3, area, index),
+					onMouseLeave: _this3.hoverOff.bind(_this3, area, index),
+					onClick: _this3.click.bind(_this3, area, index), href: area.href });
 			});
 		}
 	}, {
 		key: 'render',
 		value: function render() {
-			var _this3 = this;
+			var _this4 = this;
 
 			return _react2['default'].createElement(
 				'div',
 				{ style: this.styles.container, ref: function (node) {
-						return _this3.container = node;
+						return _this4.container = node;
 					} },
-				_react2['default'].createElement('img', { style: this.styles.img, src: this.props.src, useMap: this.props.map.name, alt: '',
+				_react2['default'].createElement('img', { style: this.styles.img, src: this.props.src, useMap: '#' + this.props.map.name, alt: '',
 					ref: function (node) {
-						return _this3.img = node;
+						return _this4.img = node;
 					}, onLoad: this.initCanvas,
 					onClick: this.props.onImageClick }),
 				_react2['default'].createElement('canvas', { ref: function (node) {
-						return _this3.canvas = node;
+						return _this4.canvas = node;
 					}, style: this.styles.canvas }),
 				_react2['default'].createElement(
 					'map',
