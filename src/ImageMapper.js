@@ -43,10 +43,12 @@ export default class ImageMapper extends Component {
 	initCanvas() {
 		if (this.props.width)
 			this.img.width = this.props.width;
-		this.canvas.width = this.img.clientWidth;
-		this.canvas.height = this.img.clientHeight;
-		this.container.style.width = this.img.clientWidth + 'px';
-		this.container.style.height = this.img.clientHeight + 'px';
+		if (this.props.height)
+			this.img.height = this.props.height;
+		this.canvas.width = this.props.width || this.img.clientWidth;
+		this.canvas.height = this.props.height || this.img.clientHeight;
+		this.container.style.width = (this.props.width || this.img.clientWidth) + 'px';
+		this.container.style.height = (this.props.height || this.img.clientHeight) + 'px';
 		this.ctx = this.canvas.getContext('2d');
 		this.ctx.fillStyle = this.props.fillColor;
 		this.ctx.strokeStyle = this.props.strokeColor;

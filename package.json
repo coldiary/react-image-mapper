@@ -19,10 +19,18 @@
   },
   "devDependencies": {
     "babel-eslint": "^4.1.3",
+    "babel-register": "^6.26.0",
+    "chai": "^4.0.0",
+    "enzyme": "^3.0.0",
+    "enzyme-adapter-react-14": "^1.0.5",
     "eslint": "^1.6.0",
     "eslint-plugin-react": "^3.5.1",
     "gulp": "^3.9.1",
+    "jsdom": "^11.6.2",
+    "jsdom-global": "^3.0.2",
+    "mocha": "^5.0.4",
     "react": "^0.14.0",
+    "react-addons-test-utils": "^0.14.8",
     "react-component-gulp-tasks": "^0.7.6",
     "react-dom": "^0.14.0"
   },
@@ -39,7 +47,8 @@
     "publish:site": "NODE_ENV=production gulp publish:examples",
     "release": "NODE_ENV=production gulp release",
     "start": "gulp dev",
-    "test": "echo \"no tests yet\" && exit 0",
+    "test": "mocha --require babel-core/register --require jsdom-global/register ./test/**/*.test.js",
+    "test:watch": "npm test -- --watch",
     "watch": "gulp watch:lib"
   },
   "keywords": [
