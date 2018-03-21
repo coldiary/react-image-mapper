@@ -78,4 +78,14 @@ describe('ImageMapper', () => {
 			expect(img.height).to.equal(100);
 		});
 	});
+
+	describe('when onClick prop is provided', () => {
+		it('map styles should have "cursor:pointer"', () => {
+			const wrapper = mount(<ImageMapper src={URL} map={MAP} onClick={() => {}} />);
+			const mapStyles = wrapper.find('map').get(0).props.style;
+
+			expect(mapStyles).to.have.property('cursor');
+			expect(mapStyles.cursor).to.equal('pointer');
+		});
+	});
 });

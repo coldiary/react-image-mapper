@@ -9,7 +9,8 @@ export default class ImageMapper extends Component {
 		this.styles = {
 			container: { position: 'relative' },
 			canvas: {...absPos, pointerEvents: 'none', zIndex: 2 },
-			img: {...absPos, zIndex: 1, userSelect: 'none' }
+			img: {...absPos, zIndex: 1, userSelect: 'none' },
+			map: props.onClick && { cursor: 'pointer' } || undefined
 		};
 	}
 
@@ -95,7 +96,7 @@ export default class ImageMapper extends Component {
 					 ref={node => this.img = node} onLoad={this.initCanvas}
 					 onClick={this.props.onImageClick} />
 				<canvas ref={node => this.canvas = node} style={this.styles.canvas} />
-				<map name={this.props.map.name}>{ this.renderAreas() }</map>
+				<map name={this.props.map.name} style={this.styles.map}>{ this.renderAreas() }</map>
 			</div>
 		);
 	}
