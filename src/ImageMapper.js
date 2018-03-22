@@ -9,7 +9,8 @@ export default class ImageMapper extends Component {
 		this.styles = {
 			container: { position: 'relative' },
 			canvas: {...absPos, pointerEvents: 'none', zIndex: 2 },
-			img: {...absPos, zIndex: 1, userSelect: 'none' }
+			img: {...absPos, zIndex: 1, userSelect: 'none' },
+			map: props.onClick && { cursor: 'pointer' } || undefined
 		};
 	}
 
@@ -43,10 +44,12 @@ export default class ImageMapper extends Component {
 	initCanvas() {
 		if (this.props.width)
 			this.img.width = this.props.width;
-		this.canvas.width = this.img.clientWidth;
-		this.canvas.height = this.img.clientHeight;
-		this.container.style.width = this.img.clientWidth + 'px';
-		this.container.style.height = this.img.clientHeight + 'px';
+		if (this.props.height)
+			this.img.height = this.props.height;
+		this.canvas.width = this.props.width || this.img.clientWidth;
+		this.canvas.height = this.props.height || this.img.clientHeight;
+		this.container.style.width = (this.props.width || this.img.clientWidth) + 'px';
+		this.container.style.height = (this.props.height || this.img.clientHeight) + 'px';
 		this.ctx = this.canvas.getContext('2d');
 		this.ctx.fillStyle = this.props.fillColor;
 		this.ctx.strokeStyle = this.props.strokeColor;
@@ -93,7 +96,7 @@ export default class ImageMapper extends Component {
 					 ref={node => this.img = node} onLoad={this.initCanvas}
 					 onClick={this.props.onImageClick} />
 				<canvas ref={node => this.canvas = node} style={this.styles.canvas} />
-				<map name={this.props.map.name}>{ this.renderAreas() }</map>
+				<map name={this.props.map.name} style={this.styles.map}>{ this.renderAreas() }</map>
 			</div>
 		);
 	}
