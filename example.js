@@ -15,18 +15,60 @@ var URL = 'https://c1.staticflickr.com/5/4052/4503898393_303cfbc9fd_b.jpg';
 var App = React.createClass({
 	displayName: 'App',
 
+	getInitialState: function getInitialState() {
+		return { msg: null };
+	},
+	load: function load() {
+		this.setState({ msg: 'Interact with image !' });
+	},
+	clicked: function clicked(area) {
+		this.setState({ msg: 'You clicked on ' + area.shape + ' at coords ' + JSON.stringify(area.coords) + ' !' });
+	},
+	clickedOutside: function clickedOutside(evt) {
+		var coords = { x: evt.nativeEvent.layerX, y: evt.nativeEvent.layerY };
+		this.setState({ msg: 'You clicked on the image at coords ' + JSON.stringify(coords) + ' !' });
+	},
+	enterArea: function enterArea(area) {
+		this.setState({ msg: 'You entered ' + area.shape + ' at coords ' + JSON.stringify(area.coords) + ' !' });
+	},
+	leaveArea: function leaveArea(area) {
+		this.setState({ msg: 'You leaved ' + area.shape + ' at coords ' + JSON.stringify(area.coords) + ' !' });
+	},
 	render: function render() {
+		var _this = this;
+
 		return React.createElement(
 			'div',
 			null,
-			React.createElement(ImageMapper, { src: URL, map: MAP, width: 500 }),
+			React.createElement(ImageMapper, { src: URL, map: MAP, width: 500,
+				onLoad: function () {
+					return _this.load();
+				},
+				onClick: function (area) {
+					return _this.clicked(area);
+				},
+				onMouseEnter: function (area) {
+					return _this.enterArea(area);
+				},
+				onMouseLeave: function (area) {
+					return _this.leaveArea(area);
+				},
+				onImageClick: function (evt) {
+					return _this.clickedOutside(evt);
+				}
+			}),
+			React.createElement(
+				'pre',
+				null,
+				this.state.msg ? this.state.msg : null
+			),
 			React.createElement(
 				'pre',
 				null,
 				React.createElement(
 					'code',
 					null,
-					'<ImageMapper src={URL} map={MAP} width={500}/>'
+					'\n<ImageMapper src={URL} map={MAP} width={500}\n\tonLoad={() => this.load()}\n\tonClick={area => this.clicked(area)}\n\tonMouseEnter={area => this.enterArea(area)}\n\tonMouseLeave={area => this.leaveArea(area)}\n\tonImageClick={evt => this.clickedOutside(evt)}\n/>\n\t\t\t\t'
 				)
 			),
 			React.createElement(
