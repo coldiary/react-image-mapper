@@ -117,7 +117,7 @@ var App = React.createClass({
 				React.createElement(
 					'code',
 					null,
-					'<ImageMapper src={URL} map={MAP} width={500}\n' + '    onLoad={() => this.load()}\n' + '    onClick={area => this.clicked(area)}\n' + '    onMouseEnter={area => this.setState({ area })}\n' + '    onMouseLeave={area => this.setState({ area: null })}\n' + '    onImageClick={evt => this.clickedOutside(evt)}\n' + '/>\n' + '{\n' + '    this.state.area &&\n' + '    <span className="tooltip" style={{ ...this.getTipPosition(this.state.area)}}>\n' + '    	{ this.state.area && this.state.area.name}\n' + '    </span>\n' + '}\n'
+					'<div className="container">\n' + '    <ImageMapper src={URL} map={MAP} width={500}\n' + '    	onLoad={() => this.load()}\n' + '    	onClick={area => this.clicked(area)}\n' + '    	onMouseEnter={area => this.enterArea(area)}\n' + '    	onMouseLeave={area => this.leaveArea(area)}\n' + '    	onImageClick={evt => this.clickedOutside(evt)}\n' + '    />\n' + '    {\n' + '    	this.state.hoveredArea &&\n' + '    	<span className="tooltip" style={{ ...this.getTipPosition(this.state.hoveredArea)}}>\n' + '    		{ this.state.hoveredArea && this.state.hoveredArea.name}\n' + '    	</span>\n' + '    }\n' + '</div>\n'
 				)
 			),
 			React.createElement(
@@ -135,7 +135,7 @@ var App = React.createClass({
 				React.createElement(
 					'code',
 					{ className: 'css' },
-					'.tooltip {\n' + '    position: absolute;\n' + '    color: #fff;\n' + '    padding: 10px;\n' + '    background: rgba(0,0,0,0.8);\n' + '    transform: translate3d(-50%, -50%, 0);\n' + '    border-radius: 5px;\n' + '    pointer-events: none;\n' + '    zIndex: 1000;\n' + '}\n'
+					'.container {\n' + '    position: relative;\n' + '}\n\n' + '.tooltip {\n' + '    position: absolute;\n' + '    color: #fff;\n' + '    padding: 10px;\n' + '    background: rgba(0,0,0,0.8);\n' + '    transform: translate3d(-50%, -50%, 0);\n' + '    border-radius: 5px;\n' + '    pointer-events: none;\n' + '    zIndex: 1000;\n' + '}\n'
 				)
 			)
 		);
