@@ -53,6 +53,7 @@ import ImageMapper from 'react-image-mapper';
 |**width**|*number*|Image width|`Displayed width`|
 |**height**|*number*|Image height|`Displayed height`|
 |**active**|*bool*|Enable/Disable highlighting|`true`|
+|**imgWidth**|*number*|Original image width|`null`|
 
 |Props callbacks|Called on|signature|
 |---|---|---|
@@ -78,6 +79,26 @@ Its structure is similar to the HTML syntax of mapping:
 |**coords**|*array of number*|Coordinates delimiting the zone according to the specified shape: <ul><li>**rect**: `top-left-X`,`top-left-Y`,`bottom-right-X`,`bottom-right-Y`</li><li>**circle**: `center-X`,`center-Y`,`radius`</li><li>**poly**: Every point in the polygon path as `point-X`,`point-Y`,...</li></ul>|
 |**href**|*string*|Target link for a click in the zone (note that if you provide a onClick prop, `href` will be prevented)|
 
+## Dynamic scaling
+When a parent component updates the 'width' prop on `<ImageMapper>`, the area coordinates also have to be scaled. This can be accomplied by specifying both the new 'width' and a constant 'imgWidth'. 'imgWidth' is the width of the original image. `<ImageMapper>` will calculate the new coordinates for each area. For example: 
+```javascript
+/*assume that image is actually 1500px wide*/
+
+// this will be a 1:1 scale, areas will be 3x bigger than they should be
+<ImageMapper
+	width={500}
+/>
+// this will be the same 1:1 scale, same problem with areas being too big
+<ImageMapper
+	width={500}
+	imgWidth={500}
+/>
+// this will scale the areas to 1/3rd, they will now fit the 500px image on the screen
+<ImageMapper
+	width={500}
+	imgWidth={1500}
+/>
+```
 
 ## Development (`src`, `lib` and the build process)
 
