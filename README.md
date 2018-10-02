@@ -80,7 +80,7 @@ Its structure is similar to the HTML syntax of mapping:
 |**href**|*string*|Target link for a click in the zone (note that if you provide a onClick prop, `href` will be prevented)|
 
 ## Dynamic scaling
-When a parent component updates the 'width' prop on `<ImageMapper>`, the area coordinates also have to be scaled. This can be accomplied by specifying both the new 'width' and a constant 'imgWidth'. 'imgWidth' is the width of the original image. `<ImageMapper>` will calculate the new coordinates for each area. For example: 
+When a parent component updates the *width* prop on `<ImageMapper>`, the area coordinates also have to be scaled. This can be accomplied by specifying both the new *width* and a constant *imgWidth*. *imgWidth* is the width of the original image. `<ImageMapper>` will calculate the new coordinates for each area. For example: 
 ```javascript
 /*assume that image is actually 1500px wide*/
 
