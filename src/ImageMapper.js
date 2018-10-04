@@ -14,6 +14,14 @@ export default class ImageMapper extends Component {
 		};
 	}
 
+	componentDidUpdate(prevProps, prevState) {
+		// only update chart if the data has changed
+		if (prevProps.width !== this.props.width) {
+			// re-draw canvas with the new width
+			this.initCanvas()
+		}
+	}
+
 	drawrect(coord) {
 		coord = coord.split(',');
 		let [left, top, right, bot] = coord;
@@ -81,8 +89,14 @@ export default class ImageMapper extends Component {
 	}
 
 	renderAreas() {
+		const { imgWidth, width } = this.props
+		// calculate scale based on current 'width' and the original 'imgWidth'
+		const scale = width && imgWidth && imgWidth > 0 ? width / imgWidth : 1
+		// method that is used to scale each area coordinates
+		const scaleCoords = coords => coords.map( coord => coord * scale )
+
 		return this.props.map.areas.map((area, index) => (
-			<area key={area._id || index} shape={area.shape} coords={area.coords.join(',')}
+			<area key={area._id || index} shape={area.shape} coords={scaleCoords(area.coords).join(',')}
 				  onMouseEnter={this.hoverOn.bind(this, area, index)}
 				  onMouseLeave={this.hoverOff.bind(this, area, index)}
 				  onClick={this.click.bind(this, area, index)} href={area.href} />
@@ -136,4 +150,5 @@ ImageMapper.propTypes = {
 	src: PropTypes.string.isRequired,
 	strokeColor: PropTypes.string,
 	width: PropTypes.number,
+	imgWidth: PropTypes.number,
 };
