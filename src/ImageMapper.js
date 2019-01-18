@@ -168,6 +168,7 @@ ImageMapper.propTypes = {
 				coords: PropTypes.arrayOf(PropTypes.number),
 				href: PropTypes.string,
 				shape: PropTypes.string,
+				preFillColor: PropTypes.string,
 				fillColor: PropTypes.string,
 			})
 		})),

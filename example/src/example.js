@@ -16,13 +16,13 @@ var URL = 'https://c1.staticflickr.com/5/4052/4503898393_303cfbc9fd_b.jpg';
 
 var App = React.createClass({
 	getInitialState() {
-		return { hoveredArea: null, msg: null, width: 500 };
+		return { hoveredArea: null, msg: null };
 	},
 	load() {
 		this.setState({ msg: 'Interact with image !' });
 	},
 	clicked(area) {
-		this.setState({ msg: `You clicked on ${area.shape} at coords ${JSON.stringify(area.coords)} !`, width: 700});
+		this.setState({ msg: `You clicked on ${area.shape} at coords ${JSON.stringify(area.coords)} !`});
 	},
 	clickedOutside(evt) {
 		const coords = {x: evt.nativeEvent.layerX, y: evt.nativeEvent.layerY };
@@ -49,7 +49,7 @@ var App = React.createClass({
 		return (
 			<div>
 				<div style={{ position: 'relative' }}>
-					<ImageMapper src={URL} map={MAP} width={this.state.width} imgWidth={500}
+					<ImageMapper src={URL} map={MAP} width={500}
 						onLoad={() => this.load()}
 						onClick={area => this.clicked(area)}
 						onMouseEnter={area => this.enterArea(area)}
