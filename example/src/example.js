@@ -5,10 +5,10 @@ var ImageMapper = require('react-image-mapper');
 var MAP = {
 	name: 'my-map',
 	areas: [
-		{name: '1', shape: 'poly', coords: [25,33,27,300,128,240,128,94]},
-		{name: '2', shape: 'poly', coords: [219,118,220,210,283,210,284,119]},
-		{name: '3', shape: 'poly', coords: [381,241,383,94,462,53,457,282]},
-		{name: '4', shape: 'poly', coords: [245,285,290,285,274,239,249,238]},
+		{name: '123', shape: 'poly', coords: [25,33,27,300,128,240,128,94], preFillColor: 'green', fillColor: 'blue'},
+		{name: '2', shape: 'poly', coords: [219,118,220,210,283,210,284,119], preFillColor: 'pink'},
+		{name: '3', shape: 'poly', coords: [381,241,383,94,462,53,457,282], fillColor: 'yellow'},
+		{name: '4', shape: 'poly', coords: [245,285,290,285,274,239,249,238], preFillColor: 'red'},
 	]
 };
 
@@ -16,13 +16,13 @@ var URL = 'https://c1.staticflickr.com/5/4052/4503898393_303cfbc9fd_b.jpg';
 
 var App = React.createClass({
 	getInitialState() {
-		return { hoveredArea: null, msg: null };
+		return { hoveredArea: null, msg: null, width: 500 };
 	},
 	load() {
 		this.setState({ msg: 'Interact with image !' });
 	},
 	clicked(area) {
-		this.setState({ msg: `You clicked on ${area.shape} at coords ${JSON.stringify(area.coords)} !` });
+		this.setState({ msg: `You clicked on ${area.shape} at coords ${JSON.stringify(area.coords)} !`, width: 700});
 	},
 	clickedOutside(evt) {
 		const coords = {x: evt.nativeEvent.layerX, y: evt.nativeEvent.layerY };
@@ -49,7 +49,7 @@ var App = React.createClass({
 		return (
 			<div>
 				<div style={{ position: 'relative' }}>
-					<ImageMapper src={URL} map={MAP} width={500}
+					<ImageMapper src={URL} map={MAP} width={this.state.width} imgWidth={500}
 						onLoad={() => this.load()}
 						onClick={area => this.clicked(area)}
 						onMouseEnter={area => this.enterArea(area)}

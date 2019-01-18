@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 export default class ImageMapper extends Component {
 	constructor(props) {
 		super(props);
-		['drawrect', 'drawcircle', 'drawpoly', 'initCanvas'].forEach(f => this[f] = this[f].bind(this));
+		['drawrect', 'drawcircle', 'drawpoly', 'initCanvas', 'renderPrefilledAreas'].forEach(f => this[f] = this[f].bind(this));
 		let absPos = { position: 'absolute', top: 0, left: 0 };
 		this.styles = {
 			container: { position: 'relative' },
@@ -16,30 +16,32 @@ export default class ImageMapper extends Component {
 
 	componentDidUpdate(prevProps, prevState) {
 		// only update chart if the data has changed
-		if (prevProps.width !== this.props.width) {
+		if (prevProps.width !== this.props.width)
 			// re-draw canvas with the new width
-			this.initCanvas()
-		}
+			this.initCanvas();
 	}
 
-	drawrect(coord) {
-		coord = coord.split(',');
-		let [left, top, right, bot] = coord;
+	drawrect(coords, fillColor) {
+		let [left, top, right, bot] = coords;
+		this.ctx.fillStyle = fillColor;
 		this.ctx.strokeRect(left, top, right - left, bot - top);
 		this.ctx.fillRect(left, top, right - left, bot - top);
+		this.ctx.fillStyle = this.props.fillColor;
 	}
 
-	drawcircle(coords) {
-		coords = coords.split(',');
+	drawcircle(coords, fillColor) {
+		this.ctx.fillStyle = fillColor;
 		this.ctx.beginPath();
 		this.ctx.arc(coords[0], coords[1], coords[2], 0, 2 * Math.PI);
 		this.ctx.closePath();
 		this.ctx.stroke();
 		this.ctx.fill();
+		this.ctx.fillStyle = this.props.fillColor;
 	}
 
-	drawpoly(coords) {
-		coords = coords.split(',').reduce((a, v, i, s) => (i % 2 ? a : [...a, s.slice(i, i + 2)]), []);
+	drawpoly(coords, fillColor) {
+		coords = coords.reduce((a, v, i, s) => (i % 2 ? a : [...a, s.slice(i, i + 2)]), []);
+		this.ctx.fillStyle = fillColor;
 		this.ctx.beginPath();
 		let first = coords.unshift();
 		this.ctx.moveTo(first[0], first[1]);
@@ -47,13 +49,16 @@ export default class ImageMapper extends Component {
 		this.ctx.closePath();
 		this.ctx.stroke();
 		this.ctx.fill();
+		this.ctx.fillStyle = this.props.fillColor;
 	}
 
 	initCanvas() {
 		if (this.props.width)
 			this.img.width = this.props.width;
+		
 		if (this.props.height)
 			this.img.height = this.props.height;
+		
 		this.canvas.width = this.props.width || this.img.clientWidth;
 		this.canvas.height = this.props.height || this.img.clientHeight;
 		this.container.style.width = (this.props.width || this.img.clientWidth) + 'px';
@@ -62,21 +67,29 @@ export default class ImageMapper extends Component {
 		this.ctx.fillStyle = this.props.fillColor;
 		this.ctx.strokeStyle = this.props.strokeColor;
 		this.ctx.lineWidth = this.props.lineWidth;
+
 		if (this.props.onLoad)
 			this.props.onLoad();
+
+		this.renderPrefilledAreas();
 	}
 
 	hoverOn(area, index, event) {
 		const shape = event.target.getAttribute('shape');
+
 		if (this.props.active && this['draw' + shape])
-			this['draw' + shape](event.target.getAttribute('coords'));
+			this['draw' + shape](event.target.getAttribute('coords').split(','), area.fillColor);
+
 		if (this.props.onMouseEnter)
 			this.props.onMouseEnter(area, index, event);
 	}
 
 	hoverOff(area, index, event) {
-		if (this.props.active)
+		if (this.props.active) {
 			this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+			this.renderPrefilledAreas();
+		}
+
 		if (this.props.onMouseLeave)
 			this.props.onMouseLeave(area, index, event);
 	}
@@ -88,19 +101,35 @@ export default class ImageMapper extends Component {
 		}
 	}
 
-	renderAreas() {
-		const { imgWidth, width } = this.props
-		// calculate scale based on current 'width' and the original 'imgWidth'
-		const scale = width && imgWidth && imgWidth > 0 ? width / imgWidth : 1
-		// method that is used to scale each area coordinates
-		const scaleCoords = coords => coords.map( coord => coord * scale )
+	scaleCoords(coords) {
+		const { imgWidth, width } = this.props;
 
-		return this.props.map.areas.map((area, index) => (
-			<area key={area._id || index} shape={area.shape} coords={scaleCoords(area.coords).join(',')}
-				  onMouseEnter={this.hoverOn.bind(this, area, index)}
-				  onMouseLeave={this.hoverOff.bind(this, area, index)}
-				  onClick={this.click.bind(this, area, index)} href={area.href} />
-		));
+		// calculate scale based on current 'width' and the original 'imgWidth'
+		const scale = width && imgWidth && imgWidth > 0 ? width / imgWidth : 1;
+
+		return coords.map(coord => coord * scale);
+	}
+
+	renderPrefilledAreas() {
+		this.props.map.areas.map((area, index) => {
+			if (!area.preFillColor)
+				return;
+			
+			this['draw' + area.shape](this.scaleCoords(area.coords), area.preFillColor);
+		});
+	}
+
+	renderAreas() {
+		return this.props.map.areas.map((area, index) => {
+			const scaledCoords = this.scaleCoords(area.coords).join(',');
+
+			return (
+				<area key={area._id || index} shape={area.shape} coords={scaledCoords}
+							onMouseEnter={this.hoverOn.bind(this, area, index)}
+							onMouseLeave={this.hoverOff.bind(this, area, index)}
+							onClick={this.click.bind(this, area, index)} href={area.href} />
+			);
+		});
 	}
 
 	render() {
@@ -131,6 +160,7 @@ ImageMapper.propTypes = {
 	active: PropTypes.bool,
 	fillColor: PropTypes.string,
 	height: PropTypes.number,
+	imgWidth: PropTypes.number,
 	lineWidth: PropTypes.number,
 	map: PropTypes.shape({
 		areas: PropTypes.arrayOf(PropTypes.shape({
@@ -138,6 +168,7 @@ ImageMapper.propTypes = {
 				coords: PropTypes.arrayOf(PropTypes.number),
 				href: PropTypes.string,
 				shape: PropTypes.string,
+				fillColor: PropTypes.string,
 			})
 		})),
 		name: PropTypes.string,
@@ -150,5 +181,4 @@ ImageMapper.propTypes = {
 	src: PropTypes.string.isRequired,
 	strokeColor: PropTypes.string,
 	width: PropTypes.number,
-	imgWidth: PropTypes.number,
 };
