@@ -9,7 +9,7 @@ var ImageMapper = require('react-image-mapper');
 
 var MAP = {
 	name: 'my-map',
-	areas: [{ name: '1', shape: 'poly', coords: [25, 33, 27, 300, 128, 240, 128, 94], preFillColor: 'green', fillColor: 'blue' }, { name: '2', shape: 'poly', coords: [219, 118, 220, 210, 283, 210, 284, 119], preFillColor: 'pink' }, { name: '3', shape: 'poly', coords: [381, 241, 383, 94, 462, 53, 457, 282], fillColor: 'yellow' }, { name: '4', shape: 'poly', coords: [245, 285, 290, 285, 274, 239, 249, 238], preFillColor: 'red' }]
+	areas: [{ name: '1', shape: 'poly', coords: [25, 33, 27, 300, 128, 240, 128, 94], preFillColor: 'green', fillColor: 'blue' }, { name: '2', shape: 'poly', coords: [219, 118, 220, 210, 283, 210, 284, 119], preFillColor: 'pink' }, { name: '3', shape: 'poly', coords: [381, 241, 383, 94, 462, 53, 457, 282], fillColor: 'yellow' }, { name: '4', shape: 'poly', coords: [245, 285, 290, 285, 274, 239, 249, 238], preFillColor: 'red' }, { name: '5', shape: 'circle', coords: [170, 100, 25] }]
 };
 
 var URL = 'https://c1.staticflickr.com/5/4052/4503898393_303cfbc9fd_b.jpg';
@@ -39,20 +39,38 @@ var App = React.createClass({
 
 	getTipPosition: function getTipPosition(area) {
 		if (!area) return { top: 0, left: 0 };
-		// Calculate centroid
-		var n = area.coords.length / 2;
 
-		var _area$coords$reduce = area.coords.reduce(function (_ref, val, idx) {
-			var y = _ref.y;
-			var x = _ref.x;
+		switch (area.shape) {
+			case 'circle':
+				{
+					return { top: area.coords[1] + 'px', left: area.coords[0] + 'px' };
+				}
+			case 'poly':
+			case 'rect':
+			default:
+				{
+					var _ret = (function () {
+						// Calculate centroid
+						var n = area.coords.length / 2;
 
-			return !(idx % 2) ? { y: y, x: x + val / n } : { y: y + val / n, x: x };
-		}, { y: 0, x: 0 });
+						var _area$coords$reduce = area.coords.reduce(function (_ref, val, idx) {
+							var y = _ref.y;
+							var x = _ref.x;
 
-		var y = _area$coords$reduce.y;
-		var x = _area$coords$reduce.x;
+							return !(idx % 2) ? { y: y, x: x + val / n } : { y: y + val / n, x: x };
+						}, { y: 0, x: 0 });
 
-		return { top: y + 'px', left: x + 'px' };
+						var y = _area$coords$reduce.y;
+						var x = _area$coords$reduce.x;
+
+						return {
+							v: { top: y + 'px', left: x + 'px' }
+						};
+					})();
+
+					if (typeof _ret === 'object') return _ret.v;
+				}
+		}
 	},
 
 	render: function render() {
@@ -107,7 +125,7 @@ var App = React.createClass({
 				React.createElement(
 					'code',
 					{ className: 'json' },
-					'URL = "https://c1.staticflickr.com/5/4052/4503898393_303cfbc9fd_b.jpg"\n' + 'MAP = {\n' + '  name: "my-map",\n' + '  areas: [\n' + '    { name: "1", shape: "poly", coords: [25,33,27,300,128,240,128,94], preFillColor: "green", fillColor: "blue"  },\n' + '    { name: "2", shape: "poly", coords: [219,118,220,210,283,210,284,119], preFillColor: "pink"  },\n' + '    { name: "3", shape: "poly", coords: [381,241,383,94,462,53,457,282], fillColor: "yellow"  },\n' + '    { name: "4", shape: "poly", coords: [245,285,290,285,274,239,249,238], preFillColor: "red"  },\n' + '  ]\n}'
+					'URL = "https://c1.staticflickr.com/5/4052/4503898393_303cfbc9fd_b.jpg"\n' + 'MAP = {\n' + '  name: "my-map",\n' + '  areas: [\n' + '    { name: "1", shape: "poly", coords: [25,33,27,300,128,240,128,94], preFillColor: "green", fillColor: "blue"  },\n' + '    { name: "2", shape: "poly", coords: [219,118,220,210,283,210,284,119], preFillColor: "pink"  },\n' + '    { name: "3", shape: "poly", coords: [381,241,383,94,462,53,457,282], fillColor: "yellow"  },\n' + '    { name: "4", shape: "poly", coords: [245,285,290,285,274,239,249,238], preFillColor: "red"  },\n' + '    { name: "5", shape: "circle", coords: [170, 100, 25 ] },\n' + '  ]\n}'
 				)
 			),
 			'Example with custom tooltips:',
@@ -126,7 +144,7 @@ var App = React.createClass({
 				React.createElement(
 					'code',
 					{ className: 'js' },
-					'getTipPosition(area) {\n' + '    if (!area) return { top: 0, left: 0 };\n' + '    // Calculate centroid\n' + '    const n = area.coords.length / 2;\n' + '    const { y, x } = area.coords.reduce(({ y, x }, val, idx) => {\n' + '    	return !(idx % 2) ? { y, x: x + (val / n) } : { y: y + (val / n), x };\n' + '    }, { y: 0, x: 0 });\n' + '    return { top: `${y}px`, left: `${x}px` };\n' + '},\n'
+					'getTipPosition(area) {\n' + '	if (!area) return { top: 0, left: 0 };\n\n' + '	switch (area.shape) {\n' + '		case "circle": {\n' + '			return { top: `${area.coords[1]}px`, left: `${area.coords[0]}px` };\n' + '		}\n' + '		case "poly":\n' + '		case "rect":\n' + '		default: {\n' + '			// Calculate centroid\n' + '			const n = area.coords.length / 2;\n' + '			const { y, x } = area.coords.reduce(({ y, x }, val, idx) => {\n' + '				return !(idx % 2) ? { y, x: x + (val / n) } : { y: y + (val / n), x };\n' + '			}, { y: 0, x: 0 });\n' + '			return { top: `${y}px`, left: `${x}px` };\n' + '		}\n' + '	}\n' + '},\n'
 				)
 			),
 			React.createElement(
