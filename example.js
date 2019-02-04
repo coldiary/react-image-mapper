@@ -9,7 +9,7 @@ var ImageMapper = require('react-image-mapper');
 
 var MAP = {
 	name: 'my-map',
-	areas: [{ name: '1', shape: 'poly', coords: [25, 33, 27, 300, 128, 240, 128, 94] }, { name: '2', shape: 'poly', coords: [219, 118, 220, 210, 283, 210, 284, 119] }, { name: '3', shape: 'poly', coords: [381, 241, 383, 94, 462, 53, 457, 282] }, { name: '4', shape: 'poly', coords: [245, 285, 290, 285, 274, 239, 249, 238] }]
+	areas: [{ name: '1', shape: 'poly', coords: [25, 33, 27, 300, 128, 240, 128, 94], preFillColor: 'green', fillColor: 'blue' }, { name: '2', shape: 'poly', coords: [219, 118, 220, 210, 283, 210, 284, 119], preFillColor: 'pink' }, { name: '3', shape: 'poly', coords: [381, 241, 383, 94, 462, 53, 457, 282], fillColor: 'yellow' }, { name: '4', shape: 'poly', coords: [245, 285, 290, 285, 274, 239, 249, 238], preFillColor: 'red' }]
 };
 
 var URL = 'https://c1.staticflickr.com/5/4052/4503898393_303cfbc9fd_b.jpg';
@@ -107,7 +107,7 @@ var App = React.createClass({
 				React.createElement(
 					'code',
 					{ className: 'json' },
-					'URL = "https://c1.staticflickr.com/5/4052/4503898393_303cfbc9fd_b.jpg"\n' + 'MAP = {\n' + '  name: "my-map",\n' + '  areas: [\n' + '    { name: "1", shape: "poly", coords: [25,33,27,300,128,240,128,94] },\n' + '    { name: "2", shape: "poly", coords: [219,118,220,210,283,210,284,119] },\n' + '    { name: "3", shape: "poly", coords: [381,241,383,94,462,53,457,282] },\n' + '    { name: "4", shape: "poly", coords: [245,285,290,285,274,239,249,238] },\n' + '  ]\n}'
+					'URL = "https://c1.staticflickr.com/5/4052/4503898393_303cfbc9fd_b.jpg"\n' + 'MAP = {\n' + '  name: "my-map",\n' + '  areas: [\n' + '    { name: "1", shape: "poly", coords: [25,33,27,300,128,240,128,94], preFillColor: "green", fillColor: "blue"  },\n' + '    { name: "2", shape: "poly", coords: [219,118,220,210,283,210,284,119], preFillColor: "pink"  },\n' + '    { name: "3", shape: "poly", coords: [381,241,383,94,462,53,457,282], fillColor: "yellow"  },\n' + '    { name: "4", shape: "poly", coords: [245,285,290,285,274,239,249,238], preFillColor: "red"  },\n' + '  ]\n}'
 				)
 			),
 			'Example with custom tooltips:',
