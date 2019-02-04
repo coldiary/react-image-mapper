@@ -9,6 +9,7 @@ var MAP = {
 		{name: '2', shape: 'poly', coords: [219,118,220,210,283,210,284,119], preFillColor: 'pink'},
 		{name: '3', shape: 'poly', coords: [381,241,383,94,462,53,457,282], fillColor: 'yellow'},
 		{name: '4', shape: 'poly', coords: [245,285,290,285,274,239,249,238], preFillColor: 'red'},
+		{name: '5', shape: 'circle', coords: [170, 100, 25 ]},
 	]
 };
 
@@ -37,12 +38,22 @@ var App = React.createClass({
 
 	getTipPosition(area) {
 		if (!area) return { top: 0, left: 0 };
-		// Calculate centroid
-		const n = area.coords.length / 2;
-		const { y, x } = area.coords.reduce(({ y, x }, val, idx) => {
-			return !(idx % 2) ? { y, x: x + (val / n) } : { y: y + (val / n), x };
-		}, { y: 0, x: 0 });
-		return { top: `${y}px`, left: `${x}px` };
+
+		switch (area.shape) {
+			case 'circle': {
+				return { top: `${area.coords[1]}px`, left: `${area.coords[0]}px` };
+			}
+			case 'poly':
+			case 'rect':
+			default: {
+				// Calculate centroid
+				const n = area.coords.length / 2;
+				const { y, x } = area.coords.reduce(({ y, x }, val, idx) => {
+					return !(idx % 2) ? { y, x: x + (val / n) } : { y: y + (val / n), x };
+				}, { y: 0, x: 0 });
+				return { top: `${y}px`, left: `${x}px` };
+			}
+		}
 	},
 
 	render () {
@@ -82,6 +93,7 @@ var App = React.createClass({
 					'    { name: "2", shape: "poly", coords: [219,118,220,210,283,210,284,119], preFillColor: "pink"  },\n' +
 					'    { name: "3", shape: "poly", coords: [381,241,383,94,462,53,457,282], fillColor: "yellow"  },\n' +
 					'    { name: "4", shape: "poly", coords: [245,285,290,285,274,239,249,238], preFillColor: "red"  },\n' +
+					'    { name: "5", shape: "circle", coords: [170, 100, 25 ] },\n' +
 					'  ]\n}'
 				}</code></pre>
 				Example with custom tooltips:
@@ -103,15 +115,24 @@ var App = React.createClass({
 					'</div>\n'
 				}</code></pre>
 				<pre><code className="js">{
-					'getTipPosition(area) {\n' +
-					'    if (!area) return { top: 0, left: 0 };\n' +
-					'    // Calculate centroid\n' +
-					'    const n = area.coords.length / 2;\n' +
-					'    const { y, x } = area.coords.reduce(({ y, x }, val, idx) => {\n' +
-					'    	return !(idx % 2) ? { y, x: x + (val / n) } : { y: y + (val / n), x };\n' +
-					'    }, { y: 0, x: 0 });\n' +
-					'    return { top: `${y}px`, left: `${x}px` };\n' +
-					'},\n'
+				'getTipPosition(area) {\n' +
+				'	if (!area) return { top: 0, left: 0 };\n\n' +
+				'	switch (area.shape) {\n' +
+				'		case "circle": {\n' +
+				'			return { top: `${area.coords[1]}px`, left: `${area.coords[0]}px` };\n' +
+				'		}\n' +
+				'		case "poly":\n' +
+				'		case "rect":\n' +
+				'		default: {\n' +
+				'			// Calculate centroid\n' +
+				'			const n = area.coords.length / 2;\n' +
+				'			const { y, x } = area.coords.reduce(({ y, x }, val, idx) => {\n' +
+				'				return !(idx % 2) ? { y, x: x + (val / n) } : { y: y + (val / n), x };\n' +
+				'			}, { y: 0, x: 0 });\n' +
+				'			return { top: `${y}px`, left: `${x}px` };\n' +
+				'		}\n' +
+				'	}\n' +
+				'},\n'
 				}</code></pre>
 				<pre><code className="css">{
 					'.container {\n' +
