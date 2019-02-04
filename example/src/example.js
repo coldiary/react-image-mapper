@@ -5,10 +5,10 @@ var ImageMapper = require('react-image-mapper');
 var MAP = {
 	name: 'my-map',
 	areas: [
-		{name: '1', shape: 'poly', coords: [25,33,27,300,128,240,128,94]},
-		{name: '2', shape: 'poly', coords: [219,118,220,210,283,210,284,119]},
-		{name: '3', shape: 'poly', coords: [381,241,383,94,462,53,457,282]},
-		{name: '4', shape: 'poly', coords: [245,285,290,285,274,239,249,238]},
+		{name: '1', shape: 'poly', coords: [25,33,27,300,128,240,128,94], preFillColor: 'green', fillColor: 'blue'},
+		{name: '2', shape: 'poly', coords: [219,118,220,210,283,210,284,119], preFillColor: 'pink'},
+		{name: '3', shape: 'poly', coords: [381,241,383,94,462,53,457,282], fillColor: 'yellow'},
+		{name: '4', shape: 'poly', coords: [245,285,290,285,274,239,249,238], preFillColor: 'red'},
 	]
 };
 
@@ -22,7 +22,7 @@ var App = React.createClass({
 		this.setState({ msg: 'Interact with image !' });
 	},
 	clicked(area) {
-		this.setState({ msg: `You clicked on ${area.shape} at coords ${JSON.stringify(area.coords)} !` });
+		this.setState({ msg: `You clicked on ${area.shape} at coords ${JSON.stringify(area.coords)} !`});
 	},
 	clickedOutside(evt) {
 		const coords = {x: evt.nativeEvent.layerX, y: evt.nativeEvent.layerY };
@@ -78,10 +78,10 @@ var App = React.createClass({
 					'MAP = {\n' +
 					'  name: "my-map",\n' +
 					'  areas: [\n' +
-					'    { name: "1", shape: "poly", coords: [25,33,27,300,128,240,128,94] },\n' +
-					'    { name: "2", shape: "poly", coords: [219,118,220,210,283,210,284,119] },\n' +
-					'    { name: "3", shape: "poly", coords: [381,241,383,94,462,53,457,282] },\n' +
-					'    { name: "4", shape: "poly", coords: [245,285,290,285,274,239,249,238] },\n' +
+					'    { name: "1", shape: "poly", coords: [25,33,27,300,128,240,128,94], preFillColor: "green", fillColor: "blue"  },\n' +
+					'    { name: "2", shape: "poly", coords: [219,118,220,210,283,210,284,119], preFillColor: "pink"  },\n' +
+					'    { name: "3", shape: "poly", coords: [381,241,383,94,462,53,457,282], fillColor: "yellow"  },\n' +
+					'    { name: "4", shape: "poly", coords: [245,285,290,285,274,239,249,238], preFillColor: "red"  },\n' +
 					'  ]\n}'
 				}</code></pre>
 				Example with custom tooltips:

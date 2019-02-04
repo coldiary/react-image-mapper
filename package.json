@@ -15,7 +15,8 @@
   },
   "dependencies": {
     "classnames": "^2.1.2",
-    "prop-types": "^15.6.0"
+    "prop-types": "^15.6.0",
+    "require-dir": "^1.2.0"
   },
   "devDependencies": {
     "babel-eslint": "^4.1.3",
