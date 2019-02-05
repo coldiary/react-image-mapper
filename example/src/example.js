@@ -146,7 +146,7 @@ var App = React.createClass({
 					'    transform: translate3d(-50%, -50%, 0);\n' +
 					'    border-radius: 5px;\n' +
 					'    pointer-events: none;\n' +
-					'    zIndex: 1000;\n' +
+					'    z-index: 1000;\n' +
 					'}\n'
 				}</code></pre>
 			</div>
