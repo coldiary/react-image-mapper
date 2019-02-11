@@ -1017,11 +1017,47 @@ var ImageMapper = (function (_Component) {
 		value: function renderPrefilledAreas() {
 			var _this3 = this;
 
-			this.props.map.areas.map(function (area, index) {
+			this.props.map.areas.map(function (area) {
 				if (!area.preFillColor) return;
-
 				_this3['draw' + area.shape](_this3.scaleCoords(area.coords), area.preFillColor);
 			});
+		}
+	}, {
+		key: 'computeCenter',
+		value: function computeCenter(area) {
+			if (!area) return [0, 0];
+
+			var scaledCoords = this.scaleCoords(area.coords);
+
+			switch (area.shape) {
+				case "circle":
+					return [scaledCoords[0], scaledCoords[1]];
+				case "poly":
+				case "rect":
+				default:
+					{
+						var _ret = (function () {
+							// Calculate centroid
+							var n = scaledCoords.length / 2;
+
+							var _scaledCoords$reduce = scaledCoords.reduce(function (_ref, val, idx) {
+								var y = _ref.y;
+								var x = _ref.x;
+
+								return !(idx % 2) ? { y: y, x: x + val / n } : { y: y + val / n, x: x };
+							}, { y: 0, x: 0 });
+
+							var y = _scaledCoords$reduce.y;
+							var x = _scaledCoords$reduce.x;
+
+							return {
+								v: [x, y]
+							};
+						})();
+
+						if (typeof _ret === 'object') return _ret.v;
+					}
+			}
 		}
 	}, {
 		key: 'renderAreas',
@@ -1029,12 +1065,13 @@ var ImageMapper = (function (_Component) {
 			var _this4 = this;
 
 			return this.props.map.areas.map(function (area, index) {
-				var scaledCoords = _this4.scaleCoords(area.coords).join(',');
-
-				return _react2['default'].createElement('area', { key: area._id || index, shape: area.shape, coords: scaledCoords,
-					onMouseEnter: _this4.hoverOn.bind(_this4, area, index),
-					onMouseLeave: _this4.hoverOff.bind(_this4, area, index),
-					onClick: _this4.click.bind(_this4, area, index), href: area.href });
+				var scaledCoords = _this4.scaleCoords(area.coords);
+				var center = _this4.computeCenter(area);
+				var extendedArea = _extends({}, area, { scaledCoords: scaledCoords, center: center });
+				return _react2['default'].createElement('area', { key: area._id || index, shape: area.shape, coords: scaledCoords.join(','),
+					onMouseEnter: _this4.hoverOn.bind(_this4, extendedArea, index),
+					onMouseLeave: _this4.hoverOff.bind(_this4, extendedArea, index),
+					onClick: _this4.click.bind(_this4, extendedArea, index), href: area.href });
 			});
 		}
 	}, {

@@ -38,39 +38,7 @@ var App = React.createClass({
 	},
 
 	getTipPosition: function getTipPosition(area) {
-		if (!area) return { top: 0, left: 0 };
-
-		switch (area.shape) {
-			case 'circle':
-				{
-					return { top: area.coords[1] + 'px', left: area.coords[0] + 'px' };
-				}
-			case 'poly':
-			case 'rect':
-			default:
-				{
-					var _ret = (function () {
-						// Calculate centroid
-						var n = area.coords.length / 2;
-
-						var _area$coords$reduce = area.coords.reduce(function (_ref, val, idx) {
-							var y = _ref.y;
-							var x = _ref.x;
-
-							return !(idx % 2) ? { y: y, x: x + val / n } : { y: y + val / n, x: x };
-						}, { y: 0, x: 0 });
-
-						var y = _area$coords$reduce.y;
-						var x = _area$coords$reduce.x;
-
-						return {
-							v: { top: y + 'px', left: x + 'px' }
-						};
-					})();
-
-					if (typeof _ret === 'object') return _ret.v;
-				}
-		}
+		return { top: area.center[1] + 'px', left: area.center[0] + 'px' };
 	},
 
 	render: function render() {
@@ -135,7 +103,7 @@ var App = React.createClass({
 				React.createElement(
 					'code',
 					null,
-					'<div className="container">\n' + '    <ImageMapper src={URL} map={MAP} width={500}\n' + '    	onLoad={() => this.load()}\n' + '    	onClick={area => this.clicked(area)}\n' + '    	onMouseEnter={area => this.enterArea(area)}\n' + '    	onMouseLeave={area => this.leaveArea(area)}\n' + '    	onImageClick={evt => this.clickedOutside(evt)}\n' + '    />\n' + '    {\n' + '    	this.state.hoveredArea &&\n' + '    	<span className="tooltip" style={{ ...this.getTipPosition(this.state.hoveredArea)}}>\n' + '    		{ this.state.hoveredArea && this.state.hoveredArea.name}\n' + '    	</span>\n' + '    }\n' + '</div>\n'
+					'<div className="container">\n' + '    <ImageMapper src={URL} map={MAP} width={500}\n' + '    	onLoad={() => this.load()}\n' + '    	onClick={area => this.clicked(area)}\n' + '    	onMouseEnter={area => this.enterArea(area)}\n' + '    	onMouseLeave={area => this.leaveArea(area)}\n' + '    	onImageClick={evt => this.clickedOutside(evt)}\n' + '    />\n' + '    {\n' + '    	this.state.hoveredArea &&\n' + '    	<span className="tooltip"\n' + '    	    style={{ ...this.getTipPosition(this.state.hoveredArea)}}>\n' + '    		{ this.state.hoveredArea && this.state.hoveredArea.name}\n' + '    	</span>\n' + '    }\n' + '</div>\n'
 				)
 			),
 			React.createElement(
@@ -144,7 +112,7 @@ var App = React.createClass({
 				React.createElement(
 					'code',
 					{ className: 'js' },
-					'getTipPosition(area) {\n' + '	if (!area) return { top: 0, left: 0 };\n\n' + '	switch (area.shape) {\n' + '		case "circle": {\n' + '			return { top: `${area.coords[1]}px`, left: `${area.coords[0]}px` };\n' + '		}\n' + '		case "poly":\n' + '		case "rect":\n' + '		default: {\n' + '			// Calculate centroid\n' + '			const n = area.coords.length / 2;\n' + '			const { y, x } = area.coords.reduce(({ y, x }, val, idx) => {\n' + '				return !(idx % 2) ? { y, x: x + (val / n) } : { y: y + (val / n), x };\n' + '			}, { y: 0, x: 0 });\n' + '			return { top: `${y}px`, left: `${x}px` };\n' + '		}\n' + '	}\n' + '},\n'
+					'getTipPosition(area) {\n' + '	return { top: `${area.center[1]}px`, left: `${area.center[0]}px` };\n' + '},\n'
 				)
 			),
 			React.createElement(
