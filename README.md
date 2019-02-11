@@ -65,13 +65,13 @@ import ImageMapper from 'react-image-mapper';
 
 Map is an object describing highlighted areas in the image.
 
-Its structure is similar to the HTML syntax of mapping:   
-	
-- **map**: (*object*) Object to describe highlighted zones 
+Its structure is similar to the HTML syntax of mapping:
+
+- **map**: (*object*) Object to describe highlighted zones
 	- **name**: (*string*) Name of the map, used to bind to the image.
-	- **areas**: (*array*) Array of **area objects** 
+	- **areas**: (*array*) Array of **area objects**
 		- **area**: (*object*) Shaped like below :
-		
+
 |Property| type|Description|
 |---|:---:|---|
 |**_id**|*string*|Uniquely identify an area. Index in array is used if this value is not provided.|
@@ -79,25 +79,26 @@ Its structure is similar to the HTML syntax of mapping:
 |**coords**|*array of number*|Coordinates delimiting the zone according to the specified shape: <ul><li>**rect**: `top-left-X`,`top-left-Y`,`bottom-right-X`,`bottom-right-Y`</li><li>**circle**: `center-X`,`center-Y`,`radius`</li><li>**poly**: Every point in the polygon path as `point-X`,`point-Y`,...</li></ul>|
 |**href**|*string*|Target link for a click in the zone (note that if you provide a onClick prop, `href` will be prevented)|
 
+When received from an event handler, an area is extended with the following properties:
+
+|Property| type|Description|
+|---|:---:|---|
+|**scaledCoords**|*array of number*|Scaled coordinates (see [Dynamic Scaling](#dynamic-scaling) below)|
+|**center**|*array of number*|Coordinates positionning the center or centroid of the area: `[X, Y]`|
+
 ## Dynamic scaling
-When a parent component updates the **width** prop on `<ImageMapper>`, the area coordinates also have to be scaled. This can be accomplied by specifying both the new **width** and a constant **imgWidth**. **imgWidth** is the width of the original image. `<ImageMapper>` will calculate the new coordinates for each area. For example: 
+When a parent component updates the **width** prop on `<ImageMapper>`, the area coordinates also have to be scaled. This can be accomplied by specifying both the new **width** and a constant **imgWidth**. **imgWidth** is the width of the original image. `<ImageMapper>` will calculate the new coordinates for each area. For example:
 ```javascript
-/*assume that image is actually 1500px wide*/
+/* assume that image is actually 1500px wide */
 
 // this will be a 1:1 scale, areas will be 3x bigger than they should be
-<ImageMapper
-	width={500}
-/>
+<ImageMapper width={500} />
+
 // this will be the same 1:1 scale, same problem with areas being too big
-<ImageMapper
-	width={500}
-	imgWidth={500}
-/>
+<ImageMapper width={500} imgWidth={500} />
+
 // this will scale the areas to 1/3rd, they will now fit the 500px image on the screen
-<ImageMapper
-	width={500}
-	imgWidth={1500}
-/>
+<ImageMapper width={500} imgWidth={1500} />
 ```
 
 ## Development (`src`, `lib` and the build process)
@@ -121,4 +122,3 @@ If you'd like to improve this code or ask/advise for any improvement, feel free 
 Distributed with an MIT License. See LICENSE.txt for more details
 
 Copyright (c) 2017 Coldiary.
-

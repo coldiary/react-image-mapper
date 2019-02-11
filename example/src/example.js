@@ -37,23 +37,7 @@ var App = React.createClass({
 	},
 
 	getTipPosition(area) {
-		if (!area) return { top: 0, left: 0 };
-
-		switch (area.shape) {
-			case 'circle': {
-				return { top: `${area.coords[1]}px`, left: `${area.coords[0]}px` };
-			}
-			case 'poly':
-			case 'rect':
-			default: {
-				// Calculate centroid
-				const n = area.coords.length / 2;
-				const { y, x } = area.coords.reduce(({ y, x }, val, idx) => {
-					return !(idx % 2) ? { y, x: x + (val / n) } : { y: y + (val / n), x };
-				}, { y: 0, x: 0 });
-				return { top: `${y}px`, left: `${x}px` };
-			}
-		}
+		return { top: `${area.center[1]}px`, left: `${area.center[0]}px` };
 	},
 
 	render () {
@@ -108,31 +92,17 @@ var App = React.createClass({
 					'    />\n' +
 					'    {\n' +
 					'    	this.state.hoveredArea &&\n' +
-					'    	<span className="tooltip" style={{ ...this.getTipPosition(this.state.hoveredArea)}}>\n' +
+					'    	<span className="tooltip"\n' +
+					'    	    style={{ ...this.getTipPosition(this.state.hoveredArea)}}>\n' +
 					'    		{ this.state.hoveredArea && this.state.hoveredArea.name}\n' +
 					'    	</span>\n' +
 					'    }\n' +
 					'</div>\n'
 				}</code></pre>
 				<pre><code className="js">{
-				'getTipPosition(area) {\n' +
-				'	if (!area) return { top: 0, left: 0 };\n\n' +
-				'	switch (area.shape) {\n' +
-				'		case "circle": {\n' +
-				'			return { top: `${area.coords[1]}px`, left: `${area.coords[0]}px` };\n' +
-				'		}\n' +
-				'		case "poly":\n' +
-				'		case "rect":\n' +
-				'		default: {\n' +
-				'			// Calculate centroid\n' +
-				'			const n = area.coords.length / 2;\n' +
-				'			const { y, x } = area.coords.reduce(({ y, x }, val, idx) => {\n' +
-				'				return !(idx % 2) ? { y, x: x + (val / n) } : { y: y + (val / n), x };\n' +
-				'			}, { y: 0, x: 0 });\n' +
-				'			return { top: `${y}px`, left: `${x}px` };\n' +
-				'		}\n' +
-				'	}\n' +
-				'},\n'
+					'getTipPosition(area) {\n' +
+					'	return { top: `${area.center[1]}px`, left: `${area.center[0]}px` };\n' +
+					'},\n'
 				}</code></pre>
 				<pre><code className="css">{
 					'.container {\n' +

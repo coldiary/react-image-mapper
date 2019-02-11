@@ -1,6 +1,6 @@
 {
   "name": "react-image-mapper",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "imageMapper",
   "main": "lib/ImageMapper.js",
   "author": "Coldiary",

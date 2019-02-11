@@ -55,10 +55,10 @@ export default class ImageMapper extends Component {
 	initCanvas() {
 		if (this.props.width)
 			this.img.width = this.props.width;
-		
+
 		if (this.props.height)
 			this.img.height = this.props.height;
-		
+
 		this.canvas.width = this.props.width || this.img.clientWidth;
 		this.canvas.height = this.props.height || this.img.clientHeight;
 		this.container.style.width = (this.props.width || this.img.clientWidth) + 'px';
@@ -111,23 +111,42 @@ export default class ImageMapper extends Component {
 	}
 
 	renderPrefilledAreas() {
-		this.props.map.areas.map((area, index) => {
-			if (!area.preFillColor)
-				return;
-			
+		this.props.map.areas.map((area) => {
+			if (!area.preFillColor) return;
 			this['draw' + area.shape](this.scaleCoords(area.coords), area.preFillColor);
 		});
 	}
 
+	computeCenter(area) {
+		if (!area) return [0, 0];
+
+		const scaledCoords = this.scaleCoords(area.coords);
+
+		switch (area.shape) {
+			case "circle": return [scaledCoords[0], scaledCoords[1]];
+			case "poly":
+			case "rect":
+			default: {
+				// Calculate centroid
+				const n = scaledCoords.length / 2;
+				const { y, x } = scaledCoords.reduce(({ y, x }, val, idx) => {
+					return !(idx % 2) ? { y, x: x + (val / n) } : { y: y + (val / n), x };
+				}, { y: 0, x: 0 });
+				return [x, y];
+			}
+		}
+	}
+
 	renderAreas() {
 		return this.props.map.areas.map((area, index) => {
-			const scaledCoords = this.scaleCoords(area.coords).join(',');
-
+			const scaledCoords = this.scaleCoords(area.coords);
+			const center = this.computeCenter(area);
+			const extendedArea = { ...area, scaledCoords, center };
 			return (
-				<area key={area._id || index} shape={area.shape} coords={scaledCoords}
-							onMouseEnter={this.hoverOn.bind(this, area, index)}
-							onMouseLeave={this.hoverOff.bind(this, area, index)}
-							onClick={this.click.bind(this, area, index)} href={area.href} />
+				<area key={area._id || index} shape={area.shape} coords={scaledCoords.join(',')}
+					onMouseEnter={this.hoverOn.bind(this, extendedArea, index)}
+					onMouseLeave={this.hoverOff.bind(this, extendedArea, index)}
+					onClick={this.click.bind(this, extendedArea, index)} href={area.href} />
 			);
 		});
 	}
