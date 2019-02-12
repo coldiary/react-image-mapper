@@ -103,10 +103,8 @@ export default class ImageMapper extends Component {
 
 	scaleCoords(coords) {
 		const { imgWidth, width } = this.props;
-
 		// calculate scale based on current 'width' and the original 'imgWidth'
 		const scale = width && imgWidth && imgWidth > 0 ? width / imgWidth : 1;
-
 		return coords.map(coord => coord * scale);
 	}
 
@@ -146,6 +144,7 @@ export default class ImageMapper extends Component {
 				<area key={area._id || index} shape={area.shape} coords={scaledCoords.join(',')}
 					onMouseEnter={this.hoverOn.bind(this, extendedArea, index)}
 					onMouseLeave={this.hoverOff.bind(this, extendedArea, index)}
+					onMouseMove={this.props.onMouseMove.bind(this, extendedArea, index)}
 					onClick={this.click.bind(this, extendedArea, index)} href={area.href} />
 			);
 		});
@@ -156,7 +155,8 @@ export default class ImageMapper extends Component {
 			<div style={this.styles.container} ref={node => this.container = node}>
 				<img style={this.styles.img} src={this.props.src} useMap={`#${this.props.map.name}`} alt=""
 					 ref={node => this.img = node} onLoad={this.initCanvas}
-					 onClick={this.props.onImageClick} />
+					 onClick={this.props.onImageClick}
+					 onMouseMove={this.props.onImageMouseMove}/>
 				<canvas ref={node => this.canvas = node} style={this.styles.canvas} />
 				<map name={this.props.map.name} style={this.styles.map}>{ this.renderAreas() }</map>
 			</div>
@@ -194,7 +194,9 @@ ImageMapper.propTypes = {
 		name: PropTypes.string,
 	}),
 	onClick: PropTypes.func,
+	onMouseMove: PropTypes.func,
 	onImageClick: PropTypes.func,
+	onImageMouseMove: PropTypes.func,
 	onLoad: PropTypes.func,
 	onMouseEnter: PropTypes.func,
 	onMouseLeave: PropTypes.func,

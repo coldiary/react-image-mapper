@@ -1008,7 +1008,6 @@ var ImageMapper = (function (_Component) {
 
 			// calculate scale based on current 'width' and the original 'imgWidth'
 			var scale = width && imgWidth && imgWidth > 0 ? width / imgWidth : 1;
-
 			return coords.map(function (coord) {
 				return coord * scale;
 			});
@@ -1072,6 +1071,7 @@ var ImageMapper = (function (_Component) {
 				return _react2['default'].createElement('area', { key: area._id || index, shape: area.shape, coords: scaledCoords.join(','),
 					onMouseEnter: _this4.hoverOn.bind(_this4, extendedArea, index),
 					onMouseLeave: _this4.hoverOff.bind(_this4, extendedArea, index),
+					onMouseMove: _this4.props.onMouseMove.bind(_this4, extendedArea, index),
 					onClick: _this4.click.bind(_this4, extendedArea, index), href: area.href });
 			});
 		}
@@ -1089,7 +1089,8 @@ var ImageMapper = (function (_Component) {
 					ref: function (node) {
 						return _this5.img = node;
 					}, onLoad: this.initCanvas,
-					onClick: this.props.onImageClick }),
+					onClick: this.props.onImageClick,
+					onMouseMove: this.props.onImageMouseMove }),
 				_react2['default'].createElement('canvas', { ref: function (node) {
 						return _this5.canvas = node;
 					}, style: this.styles.canvas }),
@@ -1137,7 +1138,9 @@ ImageMapper.propTypes = {
 		name: _propTypes2['default'].string
 	}),
 	onClick: _propTypes2['default'].func,
+	onMouseMove: _propTypes2['default'].func,
 	onImageClick: _propTypes2['default'].func,
+	onImageMouseMove: _propTypes2['default'].func,
 	onLoad: _propTypes2['default'].func,
 	onMouseEnter: _propTypes2['default'].func,
 	onMouseLeave: _propTypes2['default'].func,

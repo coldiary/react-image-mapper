@@ -60,8 +60,10 @@ import ImageMapper from 'react-image-mapper';
 |**onLoad**|Image loading and canvas initialization completed|`(): void`|
 |**onMouseEnter**|Hovering a zone in image|`(area: obj, index: num, event): void`|
 |**onMouseLeave**|Leaving a zone in image|`(area: obj, index: num, event): void`|
+|**onMouseMove**|Moving mouse on a zone in image|`(area: obj, index: num, event): void`|
 |**onClick**|Click on a zone in image|`(area: obj, index: num, event): void`|
 |**onImageClick**|Click outside of a zone in image|`(event): void`|
+|**onImageMouseMove**|Moving mouse on the image itself|`(event): void`|
 
 Map is an object describing highlighted areas in the image.
 
