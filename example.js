@@ -18,7 +18,7 @@ var App = React.createClass({
 	displayName: 'App',
 
 	getInitialState: function getInitialState() {
-		return { hoveredArea: null, msg: null };
+		return { hoveredArea: null, msg: null, moveMsg: null };
 	},
 	load: function load() {
 		this.setState({ msg: 'Interact with image !' });
@@ -30,11 +30,19 @@ var App = React.createClass({
 		var coords = { x: evt.nativeEvent.layerX, y: evt.nativeEvent.layerY };
 		this.setState({ msg: 'You clicked on the image at coords ' + JSON.stringify(coords) + ' !' });
 	},
+	moveOnImage: function moveOnImage(evt) {
+		var coords = { x: evt.nativeEvent.layerX, y: evt.nativeEvent.layerY };
+		this.setState({ moveMsg: 'You moved on the image at coords ' + JSON.stringify(coords) + ' !' });
+	},
 	enterArea: function enterArea(area) {
-		this.setState({ hoveredArea: area, msg: 'You entered ' + area.shape + ' at coords ' + JSON.stringify(area.coords) + ' !' });
+		this.setState({ hoveredArea: area, msg: 'You entered ' + area.shape + ' ' + area.name + ' at coords ' + JSON.stringify(area.coords) + ' !' });
 	},
 	leaveArea: function leaveArea(area) {
-		this.setState({ hoveredArea: null, msg: 'You leaved ' + area.shape + ' at coords ' + JSON.stringify(area.coords) + ' !' });
+		this.setState({ hoveredArea: null, msg: 'You leaved ' + area.shape + ' ' + area.name + ' at coords ' + JSON.stringify(area.coords) + ' !' });
+	},
+	moveOnArea: function moveOnArea(area, evt) {
+		var coords = { x: evt.nativeEvent.layerX, y: evt.nativeEvent.layerY };
+		this.setState({ moveMsg: 'You moved on ' + area.shape + ' ' + area.name + ' at coords ' + JSON.stringify(coords) + ' !' });
 	},
 
 	getTipPosition: function getTipPosition(area) {
@@ -46,82 +54,117 @@ var App = React.createClass({
 
 		return React.createElement(
 			'div',
-			null,
+			{ className: 'grid' },
 			React.createElement(
 				'div',
-				{ style: { position: 'relative' } },
-				React.createElement(ImageMapper, { src: URL, map: MAP, width: 500,
-					onLoad: function () {
-						return _this.load();
-					},
-					onClick: function (area) {
-						return _this.clicked(area);
-					},
-					onMouseEnter: function (area) {
-						return _this.enterArea(area);
-					},
-					onMouseLeave: function (area) {
-						return _this.leaveArea(area);
-					},
-					onImageClick: function (evt) {
-						return _this.clickedOutside(evt);
-					}
-				}),
-				this.state.hoveredArea && React.createElement(
+				{ className: 'presenter' },
+				React.createElement(
+					'div',
+					{ style: { position: 'relative' } },
+					React.createElement(ImageMapper, { src: URL, map: MAP, width: 500,
+						onLoad: function () {
+							return _this.load();
+						},
+						onClick: function (area) {
+							return _this.clicked(area);
+						},
+						onMouseEnter: function (area) {
+							return _this.enterArea(area);
+						},
+						onMouseLeave: function (area) {
+							return _this.leaveArea(area);
+						},
+						onMouseMove: function (area, _, evt) {
+							return _this.moveOnArea(area, evt);
+						},
+						onImageClick: function (evt) {
+							return _this.clickedOutside(evt);
+						},
+						onImageMouseMove: function (evt) {
+							return _this.moveOnImage(evt);
+						}
+					}),
+					this.state.hoveredArea && React.createElement(
+						'span',
+						{ className: 'tooltip', style: _extends({}, this.getTipPosition(this.state.hoveredArea)) },
+						this.state.hoveredArea && this.state.hoveredArea.name
+					)
+				),
+				React.createElement(
+					'pre',
+					{ className: 'message' },
+					this.state.msg ? this.state.msg : null
+				),
+				React.createElement(
+					'pre',
+					null,
+					this.state.moveMsg ? this.state.moveMsg : null
+				)
+			),
+			React.createElement(
+				'div',
+				{ className: 'source' },
+				React.createElement(
+					'h2',
+					null,
+					'Example with custom tooltips :'
+				),
+				React.createElement(
+					'p',
+					null,
+					'(message logic is not present, to keep it clear)'
+				),
+				React.createElement(
+					'pre',
+					null,
+					React.createElement(
+						'code',
+						null,
+						'<div className="container">\n' + '    <ImageMapper src={URL} map={MAP} width={500}\n' + '    	onLoad={() => this.load()}\n' + '    	onClick={area => this.clicked(area)}\n' + '    	onMouseEnter={area => this.enterArea(area)}\n' + '    	onMouseLeave={area => this.leaveArea(area)}\n' + '    	onMouseMove={(area, _, evt) => this.moveOnArea(area, evt)}\n' + '    	onImageClick={evt => this.clickedOutside(evt)}\n' + '    	onImageMouseMove={evt => this.moveOnImage(evt)}\n' + '    />\n' + '    {\n' + '    	this.state.hoveredArea &&\n' + '    	<span className="tooltip"\n' + '    	    style={{ ...this.getTipPosition(this.state.hoveredArea)}}>\n' + '    		{ this.state.hoveredArea && this.state.hoveredArea.name}\n' + '    	</span>\n' + '    }\n' + '</div>\n'
+					)
+				),
+				React.createElement(
+					'pre',
+					null,
+					React.createElement(
+						'code',
+						{ className: 'json' },
+						'URL = "https://c1.staticflickr.com/5/4052/4503898393_303cfbc9fd_b.jpg"\n' + 'MAP = {\n' + '  name: "my-map",\n' + '  areas: [\n' + '    { name: "1", shape: "poly", coords: [25,33,27,300,128,240,128,94], preFillColor: "green", fillColor: "blue"  },\n' + '    { name: "2", shape: "poly", coords: [219,118,220,210,283,210,284,119], preFillColor: "pink"  },\n' + '    { name: "3", shape: "poly", coords: [381,241,383,94,462,53,457,282], fillColor: "yellow"  },\n' + '    { name: "4", shape: "poly", coords: [245,285,290,285,274,239,249,238], preFillColor: "red"  },\n' + '    { name: "5", shape: "circle", coords: [170, 100, 25 ] },\n' + '  ]\n}'
+					)
+				),
+				'Handler details :  ',
+				React.createElement(
 					'span',
-					{ className: 'tooltip', style: _extends({}, this.getTipPosition(this.state.hoveredArea)) },
-					this.state.hoveredArea && this.state.hoveredArea.name
-				)
-			),
-			React.createElement(
-				'pre',
-				null,
-				this.state.msg ? this.state.msg : null
-			),
-			React.createElement(
-				'pre',
-				null,
+					{ onClick: function () {
+							return _this.setState({ codeDetails: !_this.state.codeDetails });
+						} },
+					this.state.codeDetails ? '[-]' : '[+]'
+				),
 				React.createElement(
-					'code',
+					'pre',
 					null,
-					'<ImageMapper src={URL} map={MAP} width={500}\n' + '    onLoad={() => this.load()}\n' + '    onClick={area => this.clicked(area)}\n' + '    onMouseEnter={area => this.enterArea(area)}\n' + '    onMouseLeave={area => this.leaveArea(area)}\n' + '    onImageClick={evt => this.clickedOutside(evt)}\n' + '/>\n'
-				)
-			),
-			React.createElement(
-				'pre',
-				null,
+					React.createElement(
+						'code',
+						{ className: 'js', style: { display: this.state.codeDetails ? 'block' : 'none' } },
+						'enterArea(area) {\n' + '    this.setState({ hoveredArea: area });\n' + '}\n\n' + 'leaveArea(area) {\n' + '    this.setState({ hoveredArea: null });\n' + '}\n\n' + 'getTipPosition(area) {\n' + '    return { top: `${area.center[1]}px`, left: `${area.center[0]}px` };\n' + '}\n\n'
+					)
+				),
+				'Styling details :  ',
 				React.createElement(
-					'code',
-					{ className: 'json' },
-					'URL = "https://c1.staticflickr.com/5/4052/4503898393_303cfbc9fd_b.jpg"\n' + 'MAP = {\n' + '  name: "my-map",\n' + '  areas: [\n' + '    { name: "1", shape: "poly", coords: [25,33,27,300,128,240,128,94], preFillColor: "green", fillColor: "blue"  },\n' + '    { name: "2", shape: "poly", coords: [219,118,220,210,283,210,284,119], preFillColor: "pink"  },\n' + '    { name: "3", shape: "poly", coords: [381,241,383,94,462,53,457,282], fillColor: "yellow"  },\n' + '    { name: "4", shape: "poly", coords: [245,285,290,285,274,239,249,238], preFillColor: "red"  },\n' + '    { name: "5", shape: "circle", coords: [170, 100, 25 ] },\n' + '  ]\n}'
-				)
-			),
-			'Example with custom tooltips:',
-			React.createElement(
-				'pre',
-				null,
+					'span',
+					{ onClick: function () {
+							return _this.setState({ stylindDetails: !_this.state.stylindDetails });
+						} },
+					this.state.stylindDetails ? '[-]' : '[+]'
+				),
 				React.createElement(
-					'code',
+					'pre',
 					null,
-					'<div className="container">\n' + '    <ImageMapper src={URL} map={MAP} width={500}\n' + '    	onLoad={() => this.load()}\n' + '    	onClick={area => this.clicked(area)}\n' + '    	onMouseEnter={area => this.enterArea(area)}\n' + '    	onMouseLeave={area => this.leaveArea(area)}\n' + '    	onImageClick={evt => this.clickedOutside(evt)}\n' + '    />\n' + '    {\n' + '    	this.state.hoveredArea &&\n' + '    	<span className="tooltip"\n' + '    	    style={{ ...this.getTipPosition(this.state.hoveredArea)}}>\n' + '    		{ this.state.hoveredArea && this.state.hoveredArea.name}\n' + '    	</span>\n' + '    }\n' + '</div>\n'
-				)
-			),
-			React.createElement(
-				'pre',
-				null,
-				React.createElement(
-					'code',
-					{ className: 'js' },
-					'getTipPosition(area) {\n' + '	return { top: `${area.center[1]}px`, left: `${area.center[0]}px` };\n' + '},\n'
-				)
-			),
-			React.createElement(
-				'pre',
-				null,
-				React.createElement(
-					'code',
-					{ className: 'css' },
-					'.container {\n' + '    position: relative;\n' + '}\n\n' + '.tooltip {\n' + '    position: absolute;\n' + '    color: #fff;\n' + '    padding: 10px;\n' + '    background: rgba(0,0,0,0.8);\n' + '    transform: translate3d(-50%, -50%, 0);\n' + '    border-radius: 5px;\n' + '    pointer-events: none;\n' + '    z-index: 1000;\n' + '}\n'
+					React.createElement(
+						'code',
+						{ className: 'css', style: { display: this.state.stylindDetails ? 'block' : 'none' } },
+						'.container {\n' + '    position: relative;\n' + '}\n\n' + '.tooltip {\n' + '    position: absolute;\n' + '    color: #fff;\n' + '    padding: 10px;\n' + '    background: rgba(0,0,0,0.8);\n' + '    transform: translate3d(-50%, -50%, 0);\n' + '    border-radius: 5px;\n' + '    pointer-events: none;\n' + '    z-index: 1000;\n' + '}\n'
+					)
 				)
 			)
 		);
