@@ -1,6 +1,6 @@
 {
   "name": "react-image-mapper",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "description": "imageMapper",
   "main": "lib/ImageMapper.js",
   "author": "Coldiary",
@@ -16,6 +16,7 @@
   "dependencies": {
     "classnames": "^2.1.2",
     "prop-types": "^15.6.0",
+    "react-fast-compare": "^2.0.4",
     "require-dir": "^1.2.0"
   },
   "devDependencies": {

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import isEqual from "react-fast-compare";
 
 export default class ImageMapper extends Component {
 	constructor(props) {
@@ -12,13 +13,26 @@ export default class ImageMapper extends Component {
 			img: {...absPos, zIndex: 1, userSelect: 'none' },
 			map: props.onClick && { cursor: 'pointer' } || undefined
 		};
+		// Props watched for changes to trigger update
+		this.watchedProps = [ 'active', 'fillColor', 'height', 'imgWidth', 'lineWidth', 'src', 'strokeColor', 'width' ];
 	}
 
-	componentDidUpdate(prevProps, prevState) {
-		// only update chart if the data has changed
-		if (prevProps.width !== this.props.width)
-			// re-draw canvas with the new width
-			this.initCanvas();
+	shouldComponentUpdate(nextProps) {
+		const propChanged = this.watchedProps.some(prop => this.props[prop] !== nextProps[prop]);
+		return !isEqual(this.props.map, this.state.map) || propChanged;
+	}
+
+	componentWillMount() {
+		this.updateCacheMap();
+	}
+
+	updateCacheMap() {
+		this.setState({ map: JSON.parse(JSON.stringify(this.props.map)) }, this.initCanvas);
+	}
+
+	componentDidUpdate() {
+		this.updateCacheMap();
+		this.initCanvas();
 	}
 
 	drawrect(coords, fillColor) {
@@ -109,7 +123,7 @@ export default class ImageMapper extends Component {
 	}
 
 	renderPrefilledAreas() {
-		this.props.map.areas.map((area) => {
+		this.state.map.areas.map((area) => {
 			if (!area.preFillColor) return;
 			this['draw' + area.shape](this.scaleCoords(area.coords), area.preFillColor);
 		});
@@ -136,7 +150,7 @@ export default class ImageMapper extends Component {
 	}
 
 	renderAreas() {
-		return this.props.map.areas.map((area, index) => {
+		return this.state.map.areas.map((area, index) => {
 			const scaledCoords = this.scaleCoords(area.coords);
 			const center = this.computeCenter(area);
 			const extendedArea = { ...area, scaledCoords, center };
@@ -153,12 +167,12 @@ export default class ImageMapper extends Component {
 	render() {
 		return (
 			<div style={this.styles.container} ref={node => this.container = node}>
-				<img style={this.styles.img} src={this.props.src} useMap={`#${this.props.map.name}`} alt=""
+				<img style={this.styles.img} src={this.props.src} useMap={`#${this.state.map.name}`} alt=""
 					 ref={node => this.img = node} onLoad={this.initCanvas}
 					 onClick={this.props.onImageClick}
 					 onMouseMove={this.props.onImageMouseMove}/>
 				<canvas ref={node => this.canvas = node} style={this.styles.canvas} />
-				<map name={this.props.map.name} style={this.styles.map}>{ this.renderAreas() }</map>
+				<map name={this.state.map.name} style={this.styles.map}>{ this.renderAreas() }</map>
 			</div>
 		);
 	}
@@ -181,6 +195,18 @@ ImageMapper.propTypes = {
 	height: PropTypes.number,
 	imgWidth: PropTypes.number,
 	lineWidth: PropTypes.number,
+	src: PropTypes.string.isRequired,
+	strokeColor: PropTypes.string,
+	width: PropTypes.number,
+
+	onClick: PropTypes.func,
+	onMouseMove: PropTypes.func,
+	onImageClick: PropTypes.func,
+	onImageMouseMove: PropTypes.func,
+	onLoad: PropTypes.func,
+	onMouseEnter: PropTypes.func,
+	onMouseLeave: PropTypes.func,
+
 	map: PropTypes.shape({
 		areas: PropTypes.arrayOf(PropTypes.shape({
 			area: PropTypes.shape({
@@ -193,14 +219,4 @@ ImageMapper.propTypes = {
 		})),
 		name: PropTypes.string,
 	}),
-	onClick: PropTypes.func,
-	onMouseMove: PropTypes.func,
-	onImageClick: PropTypes.func,
-	onImageMouseMove: PropTypes.func,
-	onLoad: PropTypes.func,
-	onMouseEnter: PropTypes.func,
-	onMouseLeave: PropTypes.func,
-	src: PropTypes.string.isRequired,
-	strokeColor: PropTypes.string,
-	width: PropTypes.number,
 };
