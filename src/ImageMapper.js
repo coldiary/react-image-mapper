@@ -115,6 +115,25 @@ export default class ImageMapper extends Component {
 		}
 	}
 
+	imageClick(event) {
+		if (this.props.onImageClick) {
+			event.preventDefault();
+			this.props.onImageClick(event);
+		}
+	}
+
+	mouseMove(area, index, event) {
+		if (this.props.onMouseMove) {
+			this.props.onMouseMove(area, index, event);
+		}
+	}
+
+	imageMouseMove(area, index, event) {
+		if (this.props.onImageMouseMove) {
+			this.props.onImageMouseMove(area, index, event);
+		}
+	}
+
 	scaleCoords(coords) {
 		const { imgWidth, width } = this.props;
 		// calculate scale based on current 'width' and the original 'imgWidth'
@@ -158,7 +177,7 @@ export default class ImageMapper extends Component {
 				<area key={area._id || index} shape={area.shape} coords={scaledCoords.join(',')}
 					onMouseEnter={this.hoverOn.bind(this, extendedArea, index)}
 					onMouseLeave={this.hoverOff.bind(this, extendedArea, index)}
-					onMouseMove={this.props.onMouseMove.bind(this, extendedArea, index)}
+					onMouseMove={this.mouseMove.bind(this, extendedArea, index)}
 					onClick={this.click.bind(this, extendedArea, index)} href={area.href} />
 			);
 		});
@@ -169,8 +188,8 @@ export default class ImageMapper extends Component {
 			<div style={this.styles.container} ref={node => this.container = node}>
 				<img style={this.styles.img} src={this.props.src} useMap={`#${this.state.map.name}`} alt=""
 					 ref={node => this.img = node} onLoad={this.initCanvas}
-					 onClick={this.props.onImageClick}
-					 onMouseMove={this.props.onImageMouseMove}/>
+					 onClick={this.imageClick.bind(this)}
+					 onMouseMove={this.imageMouseMove.bind(this)}/>
 				<canvas ref={node => this.canvas = node} style={this.styles.canvas} />
 				<map name={this.state.map.name} style={this.styles.map}>{ this.renderAreas() }</map>
 			</div>

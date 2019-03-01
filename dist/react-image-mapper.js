@@ -1228,6 +1228,28 @@ var ImageMapper = (function (_Component) {
 			}
 		}
 	}, {
+		key: 'imageClick',
+		value: function imageClick(event) {
+			if (this.props.onImageClick) {
+				event.preventDefault();
+				this.props.onImageClick(event);
+			}
+		}
+	}, {
+		key: 'mouseMove',
+		value: function mouseMove(area, index, event) {
+			if (this.props.onMouseMove) {
+				this.props.onMouseMove(area, index, event);
+			}
+		}
+	}, {
+		key: 'imageMouseMove',
+		value: function imageMouseMove(area, index, event) {
+			if (this.props.onImageMouseMove) {
+				this.props.onImageMouseMove(area, index, event);
+			}
+		}
+	}, {
 		key: 'scaleCoords',
 		value: function scaleCoords(coords) {
 			var _props = this.props;
@@ -1299,7 +1321,7 @@ var ImageMapper = (function (_Component) {
 				return _react2['default'].createElement('area', { key: area._id || index, shape: area.shape, coords: scaledCoords.join(','),
 					onMouseEnter: _this5.hoverOn.bind(_this5, extendedArea, index),
 					onMouseLeave: _this5.hoverOff.bind(_this5, extendedArea, index),
-					onMouseMove: _this5.props.onMouseMove.bind(_this5, extendedArea, index),
+					onMouseMove: _this5.mouseMove.bind(_this5, extendedArea, index),
 					onClick: _this5.click.bind(_this5, extendedArea, index), href: area.href });
 			});
 		}
@@ -1317,8 +1339,8 @@ var ImageMapper = (function (_Component) {
 					ref: function (node) {
 						return _this6.img = node;
 					}, onLoad: this.initCanvas,
-					onClick: this.props.onImageClick,
-					onMouseMove: this.props.onImageMouseMove }),
+					onClick: this.imageClick.bind(this),
+					onMouseMove: this.imageMouseMove.bind(this) }),
 				_react2['default'].createElement('canvas', { ref: function (node) {
 						return _this6.canvas = node;
 					}, style: this.styles.canvas }),
