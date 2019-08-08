@@ -123,7 +123,7 @@ export default class ImageMapper extends Component {
 			this["draw" + shape](
 				event.target.getAttribute("coords").split(","),
 				area.fillColor,
-				area.lineWidth || 1,
+				area.lineWidth || this.props.lineWidth,
 				area.strokeColor || this.props.strokeColor
 			);
 		}
@@ -178,7 +178,7 @@ export default class ImageMapper extends Component {
 			this["draw" + area.shape](
 				this.scaleCoords(area.coords),
 				area.preFillColor,
-				area.lineWidth || 1,
+				area.lineWidth || this.props.lineWidth,
 				area.strokeColor || this.props.strokeColor
 			);
 		});

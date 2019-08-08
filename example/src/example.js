@@ -125,6 +125,8 @@ var App = React.createClass({
 							onMouseMove={(area, _, evt) => this.moveOnArea(area, evt)}
 							onImageClick={evt => this.clickedOutside(evt)}
 							onImageMouseMove={evt => this.moveOnImage(evt)}
+							lineWidth={4}
+							strokeColor={"white"}
 						/>
 						{this.state.hoveredArea && (
 							<span
@@ -154,6 +156,8 @@ var App = React.createClass({
 								"    	onMouseMove={(area, _, evt) => this.moveOnArea(area, evt)}\n" +
 								"    	onImageClick={evt => this.clickedOutside(evt)}\n" +
 								"    	onImageMouseMove={evt => this.moveOnImage(evt)}\n" +
+								"		lineWidth={4}\n" +
+								"		strokeColor={\"white\"}\n" +
 								"    />\n" +
 								"    {\n" +
 								"    	this.state.hoveredArea &&\n" +

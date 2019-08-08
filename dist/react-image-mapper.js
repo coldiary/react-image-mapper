@@ -1212,7 +1212,7 @@ var ImageMapper = (function (_Component) {
 			var shape = event.target.getAttribute("shape");
 
 			if (this.props.active && this["draw" + shape]) {
-				this["draw" + shape](event.target.getAttribute("coords").split(","), area.fillColor, area.lineWidth || 1, area.strokeColor || this.props.strokeColor);
+				this["draw" + shape](event.target.getAttribute("coords").split(","), area.fillColor, area.lineWidth || this.props.lineWidth, area.strokeColor || this.props.strokeColor);
 			}
 			if (this.props.onMouseEnter) this.props.onMouseEnter(area, index, event);
 		}
@@ -1276,7 +1276,7 @@ var ImageMapper = (function (_Component) {
 
 			this.state.map.areas.map(function (area) {
 				if (!area.preFillColor) return;
-				_this4["draw" + area.shape](_this4.scaleCoords(area.coords), area.preFillColor, area.lineWidth || 1, area.strokeColor || _this4.props.strokeColor);
+				_this4["draw" + area.shape](_this4.scaleCoords(area.coords), area.preFillColor, area.lineWidth || _this4.props.lineWidth, area.strokeColor || _this4.props.strokeColor);
 			});
 		}
 	}, {
