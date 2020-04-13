@@ -54,6 +54,7 @@ import ImageMapper from 'react-image-mapper';
 |**height**|*number*|Image height|`Displayed height`|
 |**active**|*bool*|Enable/Disable highlighting|`true`|
 |**imgWidth**|*number*|Original image width|`null`|
+|**imgHeight**|_number_|Original image height|`null`|
 
 |Props callbacks|Called on|signature|
 |---|---|---|
@@ -89,9 +90,9 @@ When received from an event handler, an area is extended with the following prop
 |**center**|*array of number*|Coordinates positionning the center or centroid of the area: `[X, Y]`|
 
 ## Dynamic scaling
-When a parent component updates the **width** prop on `<ImageMapper>`, the area coordinates also have to be scaled. This can be accomplied by specifying both the new **width** and a constant **imgWidth**. **imgWidth** is the width of the original image. `<ImageMapper>` will calculate the new coordinates for each area. For example:
+When a parent component updates the **width**/**height** props on `<ImageMapper>`, the area coordinates also have to be scaled. This can be accomplied by specifying both the new **width**/**height** and a constant **imgWidth**/**imgHeight**. **imgWidth**/**imgHeight** is the width/height of the original image. `<ImageMapper>` will calculate the new coordinates for each area. For example:
 ```javascript
-/* assume that image is actually 1500px wide */
+/* assume that image is actually 1500px wide and 1000px tall */
 
 // this will be a 1:1 scale, areas will be 3x bigger than they should be
 <ImageMapper width={500} />
@@ -101,6 +102,9 @@ When a parent component updates the **width** prop on `<ImageMapper>`, the area 
 
 // this will scale the areas to 1/3rd, they will now fit the 500px image on the screen
 <ImageMapper width={500} imgWidth={1500} />
+
+// this will scale the areas vertically to 1/2, they will now fit the 500px height on the screen
+<ImageMapper height={500} imgHeight={1000} />
 ```
 
 ## Development (`src`, `lib` and the build process)

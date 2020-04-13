@@ -166,10 +166,12 @@ export default class ImageMapper extends Component {
 	}
 
 	scaleCoords(coords) {
-		const { imgWidth, width } = this.props;
-		// calculate scale based on current 'width' and the original 'imgWidth'
+		const { imgWidth, width, imgHeight, height } = this.props;
 		const scale = width && imgWidth && imgWidth > 0 ? width / imgWidth : 1;
-		return coords.map(coord => coord * scale);
+		const verticalScale = height && imgHeight && imgHeight > 0 ? height / imgHeight : 1;
+		return coords.map((coord, index) =>
+			height && imgHeight && index % 2 === 1 ? coord * verticalScale : coord * scale
+		);
 	}
 
 	renderPrefilledAreas() {
@@ -265,6 +267,7 @@ ImageMapper.propTypes = {
 	active: PropTypes.bool,
 	fillColor: PropTypes.string,
 	height: PropTypes.number,
+	imgHeight: PropTypes.number,
 	imgWidth: PropTypes.number,
 	lineWidth: PropTypes.number,
 	src: PropTypes.string.isRequired,
