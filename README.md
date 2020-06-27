@@ -1,3 +1,12 @@
+# NOT MAINTAINED
+
+## This repository is not maintened anymore (and since a long time).
+
+Sorry about all unanswered issues, I don't have time to maintain this package.
+If I had chance, I would rewrite this from scratch (maybe using a more typed and native approach).
+
+Feel free to fork and enhance that libray if you need.
+
 # react-image-mapper
 
 React Component to highlight interactive zones in images
@@ -112,11 +121,7 @@ To build, watch and serve the examples (which will also watch the component sour
 
 ### Notes & Contributions
 
-This a component is still a work in progress.
-
-If you encounter a bug of some kind, feel free to report the issue.
-
-If you'd like to improve this code or ask/advise for any improvement, feel free to comment it as well.
+See header.
 
 
 ## License
