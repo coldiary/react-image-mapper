@@ -91,7 +91,7 @@ var App = React.createClass({
 	leaveArea(area) {
 		this.setState({
 			hoveredArea: null,
-			msg: `You leaved ${area.shape} ${area.name} at coords ${JSON.stringify(
+			msg: `You left ${area.shape} ${area.name} at coords ${JSON.stringify(
 				area.coords
 			)} !`
 		});
